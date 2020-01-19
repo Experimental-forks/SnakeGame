@@ -13,6 +13,7 @@ public class Snake : MonoBehaviour {
     private LevelGrid levelGrid;
     private int snakeBodySize;
     private List<Vector2Int> snakeMovePositionList;
+    private List<SnakeBodyPart> snakeBodyPartList;
 
     public void Setup(LevelGrid levelGrid) {
         Debug.Log("snake: setting levelGrid");
@@ -27,9 +28,11 @@ public class Snake : MonoBehaviour {
 
         snakeMovePositionList = new List<Vector2Int>();
         snakeBodySize = 0;
+
+        snakeBodyPartList = new List<SnakeBodyPart>();
     }
 
-    void Start() {}
+    void Start() { }
 
     void Update() {
         HandleInput();
@@ -69,15 +72,16 @@ public class Snake : MonoBehaviour {
         if (gridMoveTimer >= gridMoveTimerMax) {
 
             snakeMovePositionList.Insert(0, gridPosition);
-            if (snakeMovePositionList.Count > snakeBodySize) {
+            if (snakeMovePositionList.Count > snakeBodySize + 1) {
                 snakeMovePositionList.RemoveAt(snakeMovePositionList.Count - 1);
             }
 
+            /*
             for (int i = 0; i< snakeMovePositionList.Count; i++) {
                 Vector2Int snakeMovePosition = snakeMovePositionList[i];
                 World_Sprite worldSprite = World_Sprite.Create(new Vector3(snakeMovePosition.x, snakeMovePosition.y), Vector3.one * 0.5f, Color.white);
                 FunctionTimer.Create(worldSprite.DestroySelf, gridMoveTimerMax);
-            }
+            }*/
             gridMoveTimer -= gridMoveTimerMax;
             gridPosition += gridMoveDirection;
 
@@ -85,9 +89,28 @@ public class Snake : MonoBehaviour {
         transform.position = new Vector3(gridPosition.x, gridPosition.y);
         transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(gridMoveDirection));
 
+        UpdateSnakeBodyParts();
+
         if (levelGrid.TrySnakeEatFood(gridPosition)) {
-            // grow body
+            CreateSnakeBody();
             snakeBodySize++;
+        }
+    }
+
+    private void CreateSnakeBody() {
+        snakeBodyPartList.Add(new SnakeBodyPart(snakeBodyPartList.Count));
+        /*
+        GameObject snakeBodyGameObject = new GameObject("SnakeBody", typeof(SpriteRenderer));
+        snakeBodyGameObject.GetComponent<SpriteRenderer>().sprite = GameAssets.i.snakeBodySprite;
+        Vector2Int initialPos = snakeMovePositionList[0];
+        snakeBodyGameObject.transform.position = new Vector3(initialPos.x, initialPos.y);
+        snakeBodyPartList.Add(snakeBodyGameObject.transform);
+        snakeBodyGameObject.GetComponent<SpriteRenderer>().sortingOrder = -snakeBodyPartList.Count;*/
+    }
+
+    private void UpdateSnakeBodyParts() {
+        for (int i = 0; i < snakeBodyPartList.Count; i++) {
+            snakeBodyPartList[i].SetGridPosition(snakeMovePositionList[i]);
         }
     }
 
@@ -105,5 +128,27 @@ public class Snake : MonoBehaviour {
         List<Vector2Int> gridPositionList = new List<Vector2Int>() { gridPosition };
         gridPositionList.AddRange(snakeMovePositionList);
         return gridPositionList;
+    }
+
+
+    private class SnakeBodyPart {
+
+        private Vector2Int gridPosition;
+        private Transform transform;
+        public SnakeBodyPart(int bodyIndex) {
+            GameObject snakeBodyGameObject = new GameObject("SnakeBody", typeof(SpriteRenderer));
+            snakeBodyGameObject.GetComponent<SpriteRenderer>().sprite = GameAssets.i.snakeBodySprite;
+            //Vector2Int initialPos = snakeMovePositionList[0];
+            //snakeBodyGameObject.transform.position = new Vector3(initialPos.x, initialPos.y);
+            //snakeBodyTransformList.Add(snakeBodyGameObject.transform);
+            snakeBodyGameObject.GetComponent<SpriteRenderer>().sortingOrder = -bodyIndex; //-snakeBodyTransformList.Count;
+            transform = snakeBodyGameObject.transform;
+            transform.position = new Vector3(1000, 1000); // something offscreen
+        }
+
+        public void SetGridPosition(Vector2Int gridPosition) {
+            this.gridPosition = gridPosition;
+            transform.position = new Vector3(gridPosition.x, gridPosition.y);
+        }
     }
 }

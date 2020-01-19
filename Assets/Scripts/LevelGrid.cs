@@ -11,11 +11,9 @@ public class LevelGrid  {
     private int width;
     private int height;
     
-
     public LevelGrid(int width, int height) {
         this.width = width;
         this.height = height;
-        //FunctionPeriodic.Create(SpawnFood, 1f);
     }
 
     public void Setup(Snake snake) {
@@ -29,7 +27,6 @@ public class LevelGrid  {
         int halfHeight = (int) (height / 2);
         do {
             foodGridPosition = new Vector2Int(Random.Range(0, width) - halfWidth, Random.Range(0, height) - halfHeight);
-            Debug.Log("spawning food at " + foodGridPosition);
         } while (snake.GetFullSnakeGridPositionList().IndexOf(foodGridPosition) != -1);
         
 
@@ -42,7 +39,7 @@ public class LevelGrid  {
         if (snakeGridPosition == foodGridPosition) {
             Object.Destroy(foodGameObject);
             SpawnFood();
-            CMDebug.TextPopupMouse("Snake Ate Food");
+            //CMDebug.TextPopupMouse("Snake ate food");
             return true;
         }
         return false;
