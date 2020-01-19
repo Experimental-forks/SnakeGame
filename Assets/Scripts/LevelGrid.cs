@@ -44,4 +44,22 @@ public class LevelGrid  {
         }
         return false;
     }
+
+    public Vector2Int ValidateGridPosition(Vector2Int gridPosition) {
+        int halfWidth = (int)(width / 2);
+        int halfHeight = (int)(height / 2);
+        if (gridPosition.x < -halfWidth) {
+            gridPosition.x = halfWidth - 1;
+        }
+        else if (gridPosition.x > halfWidth) {
+            gridPosition.x = -halfWidth;
+        }
+        else if (gridPosition.y < -halfHeight) {
+            gridPosition.y = halfHeight - 1;
+        }
+        else if (gridPosition.y > halfHeight) {
+            gridPosition.y = -halfHeight;
+        }
+        return gridPosition;
+    }
 }
