@@ -6,9 +6,18 @@ using CodeMonkey.Utils;
 
 public class GameHandler : MonoBehaviour {
 
+    private static GameHandler instance; 
+
+    private static int score;
+
     [SerializeField] private Snake snake;
 
     private LevelGrid levelGrid;
+
+    private void Awake() {
+        instance = this;
+        score = 0;
+    }
 
     private void Start() {
         Debug.Log("GameHandler.Start");
@@ -17,12 +26,21 @@ public class GameHandler : MonoBehaviour {
         snake.Setup(levelGrid);
         Debug.Log("setting snake on levelgrid.  snake = " + snake);
         levelGrid.Setup(snake);
-       
-        //GameObject snakeHeadGameObject = createSpriteObject(GameAssets.i.snakeHeadSprite);
+
+        CMDebug.ButtonUI(Vector2.zero, "Reload Scene", () => {
+            Loader.Load(Loader.Scene.GameScene);
+        });
     }
 
     void Update() { }
 
+    public static int GetScore() {
+        return score;
+    }
+
+    public static void AddScore() {
+        score += 100;
+    }
 
     private GameObject createSpriteObject(Sprite sprite) {
         GameObject gameObject = new GameObject();
@@ -30,5 +48,7 @@ public class GameHandler : MonoBehaviour {
         spriteRenderer.sprite = sprite;
         return gameObject;
     }
+
+
 }
 
