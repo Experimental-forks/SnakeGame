@@ -18,6 +18,14 @@ public class LevelGrid  {
 
     public void Setup(Snake snake) {
         this.snake = snake;
+
+        /*
+        // temp code to make initialization long
+        for (int i = 0; i < 50000; i++) {
+            foodGameObject = new GameObject("Food", typeof(SpriteRenderer));
+            foodGameObject.GetComponent<SpriteRenderer>().sprite = GameAssets.i.foodSprite;
+        }*/
+
         SpawnFood();
     }
 
